@@ -57,7 +57,7 @@
 /* ===== Champs : lignes uniquement, focus net ===== */
 #body-login input[type="text"],
 #body-login input[type="email"],
-#body-login input[type="password"]{
+#body-login input[type="mots de passe"]{
   width: 100%;
   padding: 12px 2px;
   background: transparent !important;
