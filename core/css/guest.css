@@ -1,735 +1,158 @@
-/* =============================================================================
-   Nextcloud — GDL Login Theme (production-grade)
-   File: themes/gdl/core/css/guest.css
-   Scope: #body-login only (safe, no side effects)
-   Goals: strong visual identity, performance, AA contrast, robust focus, RWD
-   Notes: - Avoid heavy blur radii & huge box-shadows for perf
-          - Use CSS custom properties for easy brand tweaking
-          - No DOM changes required (pure CSS)
-   ========================================================================== */
+/* =========================================================================
+   Nextcloud — Thème GDL (FR, ultra-simple + sécurité)
+   Portée : #body-login uniquement (écran de connexion)
+   DA : fond sombre + accent bleu ; sans boîte/carte
+   ======================================================================= */
 
-/* ----------------------------- */
-/* 0) Targeted Reset (scoped)    */
-/* ----------------------------- */
-#body-login, #body-login * {
-  box-sizing: border-box;
-}
-#body-login img, #body-login svg, #body-login video, #body-login canvas {
-  display: block;
-  max-width: 100%;
-}
-#body-login h1, #body-login h2, #body-login h3, #body-login p {
-  margin: 0;
-}
-#body-login a {
-  text-decoration: none;
-  color: inherit;
-}
-#body-login button, #body-login input, #body-login select, #body-login textarea {
-  font: inherit;
-}
-
-/* ----------------------------- */
-/* 1) Design Tokens              */
-/* ----------------------------- */
-#body-login {
-  /* Brand core */
-  --brand-h: 223;
-  --brand-s: 88%;
-  --brand-l: 58%;
-
-  /* Surfaces (dark default) */
-  --bg-0: 222 16% 6%;
-  --bg-1: 222 16% 7%;
-  --bg-2: 222 18% 10%;
-  --bg-3: 222 18% 12%;
-  --card: 222 18% 12%;
-
-  /* Text & lines */
+/* ===== 0) Jetons (couleurs / focus / typo) ===== */
+#body-login{
+  --brand-h: 220; --brand-s: 85%; --brand-l: 55%;      /* Bleu marque */
+  --bg-1: 220 15% 8%;                                   /* Fond sombre */
   --txt: 0 0% 98%;
-  --muted: 220 9% 70%;
-  --line: 0 0% 100% / .10;
-
-  /* States */
-  --error: 0 85% 58%;
-  --warn: 35 90% 55%;
-  --ok: 150 65% 44%;
-  --info: 212 88% 58%;
-
-  /* Effects */
-  --radius-xl: 22px;
-  --radius-lg: 18px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --elev-1: 0 8px 24px hsl(var(--brand-h) var(--brand-s) calc(var(--brand-l) - 18%) / .28);
-  --elev-2: 0 12px 40px hsl(var(--brand-h) var(--brand-s) calc(var(--brand-l) - 22%) / .32);
-  --ring: 0 0 0 4px hsl(var(--brand-h) var(--brand-s) 50% / .22);
-
-  /* Typo */
-  --font: 500 16px/1.55 system-ui, Inter, Roboto, "Segoe UI", Arial, sans-serif;
-
-  /* Layout */
-  --maxw: 520px;
-  --pad-card: clamp(22px, 4vw, 30px);
-  --gap: 12px;
-
-  /* Performance-minded blur (keep low) */
-  --blur: 8px;
+  --muted: 220 10% 70%;
+  --line: 220 12% 28%;
+  --danger: 0 82% 58%;
+  --focus: 0 0 0 3px hsl(var(--brand-h) var(--brand-s) 50% / .22);
 
   color-scheme: dark;
-  font: var(--font);
+  min-height: 100vh; margin: 0;
+  font: 500 16px/1.58 system-ui, Inter, Roboto, "Segoe UI", Arial, sans-serif;
   color: hsl(var(--txt));
-  min-height: 100vh;
-  margin: 0;
   background:
-    radial-gradient(1100px 700px at 6% -10%, hsl(var(--brand-h) var(--brand-s) 52% / .18), transparent 60%),
-    radial-gradient(900px 600px at 110% -4%, hsl(var(--brand-h) var(--brand-s) 44% / .14), transparent 60%),
-    linear-gradient(180deg, hsl(var(--bg-1)) 0%, hsl(var(--bg-0)) 100%) !important;
-  background-blend-mode: screen, screen, normal;
-  position: relative;
-  isolation: isolate;
+    radial-gradient(900px 560px at 12% -10%, hsl(var(--brand-h) var(--brand-s) 60% / .14), transparent 60%),
+    linear-gradient(180deg, hsl(220 16% 10%), hsl(var(--bg-1))) !important;
 }
 
-/* Light scheme */
-@media (prefers-color-scheme: light) {
-  #body-login {
+/* Variante claire automatique (si OS en clair) */
+@media (prefers-color-scheme: light){
+  #body-login{
     color-scheme: light;
-    --bg-0: 220 24% 98%;
-    --bg-1: 220 20% 97%;
-    --bg-2: 220 18% 96%;
-    --bg-3: 220 16% 94%;
-    --card: 0 0% 100%;
-    --txt: 222 18% 9%;
-    --muted: 220 10% 40%;
-    --line: 220 12% 20% / .12;
-    --elev-1: 0 6px 18px hsl(var(--brand-h) 40% 45% / .12);
-    --elev-2: 0 10px 28px hsl(var(--brand-h) 40% 45% / .16);
-    background:
-      radial-gradient(900px 580px at 0% -8%, hsl(var(--brand-h) 80% 72% / .20), transparent 60%),
-      linear-gradient(180deg, hsl(var(--bg-1)) 0%, hsl(var(--bg-0)) 100%) !important;
+    --bg-1: 220 25% 97%;
+    --txt: 220 18% 10%;
+    --muted: 220 12% 42%;
+    --line: 220 15% 82%;
+    background: linear-gradient(180deg, #fff, hsl(var(--bg-1))) !important;
   }
 }
 
-/* Subtle grid overlay for depth with minimal cost */
-#body-login::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .06;
-  background:
-    linear-gradient(transparent 95%, hsl(0 0% 100% / .8) 95% 100%),
-    linear-gradient(90deg, transparent 95%, hsl(0 0% 100% / .8) 95% 100%);
-  background-size: 28px 28px;
-  mix-blend-mode: overlay;
-  z-index: 0;
-}
-
-/* Reduced motion respect */
-@media (prefers-reduced-motion: reduce) {
-  #body-login * {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ----------------------------- */
-/* 2) Card & container           */
-/* ----------------------------- */
+/* ===== 1) Mise en page : sans carte ni bordure ===== */
 #body-login #login,
-#body-login form#login {
-  width: 100%;
-  max-width: var(--maxw);
-  margin: clamp(34px, 7vh, 64px) auto;
-  padding: var(--pad-card);
-  border-radius: var(--radius-xl);
-  background: hsl(var(--card) / .92);
-  border: 1px solid hsl(var(--line));
-  box-shadow: var(--elev-2);
-  position: relative;
-  overflow: clip;
-  z-index: 1;
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(115%);
-  backdrop-filter: blur(var(--blur)) saturate(115%);
+#body-login form#login{
+  max-width: 440px;
+  margin: clamp(48px, 12vh, 120px) auto;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Decorative inner gradient edge */
-#body-login #login::after,
-#body-login form#login::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  border-radius: inherit;
-  opacity: .5;
-  background:
-    linear-gradient(135deg,
-      hsl(var(--brand-h) var(--brand-s) 64% / .55),
-      transparent 38%,
-      hsl(var(--brand-h) var(--brand-s) 42% / .36));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  padding: 1px;
+/* Logo + titre */
+#body-login .logo{ display:grid; place-items:center; margin: 0 auto 8px !important; }
+#body-login .logo img, #body-login .logo svg{ width: 80px !important; height:auto; }
+#body-login h1{
+  text-align:center; margin: 6px 0 16px;
+  font-weight: 800; letter-spacing:.2px; line-height:1.25;
 }
 
-/* Layout spacing inside card */
-#body-login #login .group,
-#body-login form#login .group {
-  display: grid;
-  gap: var(--gap);
+/* ===== 2) Libellés FR + micro-texte sécurité ===== */
+#body-login label{
+  display:inline-block; margin: 12px 0 6px; font-weight: 700;
 }
 
-/* ----------------------------- */
-/* 3) Header / Logo              */
-/* ----------------------------- */
-#body-login .logo,
-#body-login header .logo {
-  display: grid;
-  place-items: center;
-  width: fit-content;
-  margin: 0 auto 14px !important;
-  padding: 10px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, hsl(0 0% 100% / .05), transparent);
-  border: 1px solid hsl(var(--line));
-  box-shadow: var(--elev-1);
+/* Aides sous libellés (sécurité) — s’affichent en petit texte */
+#body-login label[for="user"]::after{
+  content: " Utilisez votre e-mail professionnel ou identifiant interne.";
+  display:block; margin-top: 4px;
+  color: hsl(var(--muted)); font: 500 0.9rem/1.4 system-ui;
 }
-#body-login .logo img,
-#body-login .logo svg {
-  width: 92px !important;
-  height: auto;
-  border-radius: calc(var(--radius-lg) - 2px);
+#body-login label[for="password"]::after{
+  content: " Ne partagez jamais votre mot de passe. Activez l’authentification à deux facteurs si disponible.";
+  display:block; margin-top: 4px;
+  color: hsl(var(--muted)); font: 500 0.9rem/1.4 system-ui;
 }
 
-/* Title styling (depends on Nextcloud template h1) */
-#body-login h1 {
-  margin: 8px 0 12px;
-  font-weight: 800;
-  letter-spacing: .2px;
-  text-align: center;
-  line-height: 1.25;
-}
-
-/* ----------------------------- */
-/* 4) Messages / Alerts          */
-/* ----------------------------- */
-#body-login .message,
-#body-login .update {
-  margin: 4px 0 10px;
-  color: hsl(var(--muted)) !important;
-  text-align: center;
-}
-#body-login .warning {
-  color: hsl(var(--warn)) !important;
-  text-align: center;
-}
-#body-login .error,
-#body-login .error-message {
-  color: hsl(var(--error)) !important;
-  text-align: center;
-}
-
-/* Inline status pill */
-#body-login .status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: hsl(var(--bg-3) / .85);
-  border: 1px solid hsl(var(--line));
-  color: hsl(var(--muted));
-  font-size: .85rem;
-}
-#body-login .status-pill .dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: hsl(var(--info));
-}
-
-/* ----------------------------- */
-/* 5) Form Controls              */
-/* ----------------------------- */
-#body-login label {
-  display: inline-block;
-  margin: 8px 0 6px;
-  font-size: .96rem;
-  font-weight: 650;
-  color: hsl(var(--txt));
-}
-
+/* ===== 3) Champs — ligne unique, focus net, anti-autofill ===== */
 #body-login input[type="text"],
 #body-login input[type="email"],
-#body-login input[type="password"] {
+#body-login input[type="password"]{
   width: 100%;
-  appearance: none;
-  padding: 13px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid hsl(220 12% 28%);
-  background:
-    linear-gradient(180deg, hsl(222 12% 18% / .98), hsl(222 12% 16%)) !important;
+  padding: 12px 2px;
+  background: transparent !important;
+  border: 0;
+  border-bottom: 2px solid hsl(var(--line));
+  border-radius: 0;
   color: hsl(var(--txt));
   outline: none;
-  transition: border .18s ease, box-shadow .18s ease, transform .06s ease, background-color .18s ease;
-  box-shadow: inset 0 1px 0 hsl(0 0% 100% / .04);
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
-@media (prefers-color-scheme: light) {
-  #body-login input[type="text"],
-  #body-login input[type="email"],
-  #body-login input[type="password"] {
-    background: #fff !important;
-    border-color: hsl(220 12% 82%);
-    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 1);
-  }
+#body-login input::placeholder{ color: hsl(220 10% 60%); }
+#body-login input:focus{
+  border-bottom-color: hsl(var(--brand-h) var(--brand-s) var(--brand-l));
+  box-shadow: var(--focus);
 }
-
-#body-login input::placeholder {
-  color: hsl(220 10% 60%);
+#body-login input[aria-invalid="true"], 
+#body-login input:invalid{
+  border-bottom-color: hsl(var(--danger));
+  box-shadow: 0 0 0 3px hsl(var(--danger) / .18);
 }
-
-#body-login input:focus {
-  border-color: hsl(var(--brand-h) var(--brand-s) var(--brand-l));
-  box-shadow: var(--ring), inset 0 1px 0 hsl(0 0% 100% / .05);
-  transform: translateY(-1px);
+/* Anti jaunissement auto-remplissage */
+#body-login input:-webkit-autofill{
+  -webkit-text-fill-color: hsl(var(--txt));
+  transition: background-color 9999s ease-out, color 9999s ease-out;
 }
 
-#body-login input[aria-invalid="true"],
-#body-login input:invalid {
-  border-color: hsl(var(--error));
-  box-shadow: 0 0 0 4px hsl(0 85% 58% / .22);
-}
-
-#body-login .field {
-  display: grid;
-  gap: 6px;
-}
-
-/* Password reveal icon container (compatible with NC button/icon) */
-#body-login .password-toggle,
-#body-login .toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  translate: 0 -50%;
-  width: 36px; height: 36px;
-  display: grid; place-items: center;
-  border-radius: var(--radius-sm);
-  color: hsl(var(--muted));
+/* ===== 4) Bouton principal — pastille bleue lisible ===== */
+#body-login input#submit,
+#body-login button[type="submit"],
+#body-login .primary{
+  display:block; width:100%;
+  margin-top: 16px !important;
+  padding: 12px 16px !important;
+  border: 0 !important;
+  border-radius: 999px !important;   /* pastille */
   cursor: pointer;
+  color: #fff !important;
+  font-weight: 800 !important; letter-spacing:.2px;
+  background: hsl(var(--brand-h) var(--brand-s) var(--brand-l)) !important;
+  transition: filter .12s ease, transform .05s ease;
 }
-#body-login .password-toggle:hover {
-  color: hsl(var(--txt));
-}
+#body-login input#submit:hover{ filter: brightness(1.06); }
+#body-login input#submit:active{ transform: translateY(1px); }
+#body-login input#submit:disabled{ opacity:.6; cursor:not-allowed; }
 
-/* ----------------------------- */
-/* 6) Options row / links        */
-/* ----------------------------- */
+/* ===== 5) Liens / options ===== */
 #body-login .remember-login,
-#body-login .checkbox,
-#body-login .login-additional {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 8px;
+#body-login .login-additional,
+#body-login .version,
+#body-login .login-foot,
+#body-login .message, #body-login .update, #body-login .warning, #body-login .error{
+  margin-top: 10px; text-align:center; font-size:.92rem; color:hsl(var(--muted));
+}
+#body-login a{ color:hsl(var(--brand-h) var(--brand-s) var(--brand-l)) !important; }
+#body-login a:hover{ text-decoration: underline; }
+#body-login input[type="checkbox"]{ accent-color: hsl(var(--brand-h) var(--brand-s) var(--brand-l)); }
+
+/* ===== 6) Bandeau bas sécurité (SI privé) ===== */
+#body-login::after{
+  content: "Espace d’information privé. Connexions enregistrées. Verrouillez votre session et déconnectez-vous après usage.";
+  position: fixed; left:50%; bottom: 18px; transform: translateX(-50%);
+  max-width: 92vw;
+  background: hsl(0 0% 100% / .06);
+  border: 1px solid hsl(var(--line));
   color: hsl(var(--muted));
-  font-size: .9rem;
+  font: 600 .9rem/1.4 system-ui;
+  padding: 8px 12px; border-radius: 999px;
+  text-align: center;
 }
 
-#body-login input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: hsl(var(--brand-h) var(--brand-s) var(--brand-l));
-  vertical-align: middle;
-}
-
-/* Links */
-#body-login .login-additional a,
-#body-login a[href*="lostpassword"] {
-  color: hsl(var(--brand-h) var(--brand-s) var(--brand-l)) !important;
-  font-weight: 650;
-  text-decoration: none;
-  outline: none;
-  border-radius: 6px;
-  padding: 2px 4px;
-}
-#body-login .login-additional a:hover {
-  text-decoration: underline;
-}
-#body-login .login-additional a:focus-visible {
+/* ===== 7) Accessibilité : focus visibles ===== */
+#body-login *:focus-visible{
   outline: 2px solid hsl(var(--brand-h) var(--brand-s) var(--brand-l));
   outline-offset: 2px;
 }
 
-/* “Log in with a device” line */
-#body-login .alternative-logins,
-#body-login .device-login,
-#body-login .login-or-separator {
-  margin-top: 6px;
-  text-align: center;
-  color: hsl(var(--muted));
+/* ===== 8) Responsive ===== */
+@media (max-width: 420px){
+  #body-login .logo img, #body-login .logo svg{ width: 68px !important; }
+  #body-login::after{ bottom: 12px; font-size: .84rem; padding: 6px 10px; }
 }
-
-/* ----------------------------- */
-/* 7) Primary button             */
-/* ----------------------------- */
-#body-login input#submit,
-#body-login button[type="submit"],
-#body-login .primary {
-  display: block;
-  width: 100%;
-  padding: 13px 16px !important;
-  border: none !important;
-  border-radius: var(--radius-md) !important;
-  cursor: pointer;
-  color: #fff !important;
-  font-weight: 800 !important;
-  letter-spacing: .2px;
-  background:
-    linear-gradient(135deg,
-      hsl(var(--brand-h) var(--brand-s) calc(var(--brand-l) + 6%)),
-      hsl(var(--brand-h) var(--brand-s) calc(var(--brand-l) - 6%))) !important;
-  box-shadow: 0 14px 26px hsl(var(--brand-h) var(--brand-s) calc(var(--brand-l) - 14%) / .34) !important;
-  transition: transform .06s ease, filter .16s ease, box-shadow .18s ease;
-  margin-top: 12px !important;
-}
-
-/* Icon alignment inside button (arrow) */
-#body-login input#submit .icon,
-#body-login button[type="submit"] .icon {
-  display: inline-block;
-  vertical-align: middle;
-  margin-inline-end: 6px;
-}
-
-#body-login input#submit:hover,
-#body-login button[type="submit"]:hover {
-  filter: brightness(1.06);
-}
-#body-login input#submit:active,
-#body-login button[type="submit"] :active {
-  transform: translateY(1px);
-}
-#body-login input#submit:disabled,
-#body-login button[type="submit"]:disabled {
-  opacity: .65;
-  cursor: not-allowed;
-  box-shadow: none !important;
-  filter: grayscale(.1);
-}
-
-/* Secondary / subtle buttons (if present) */
-#body-login .button,
-#body-login .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid hsl(var(--line));
-  background: hsl(var(--bg-3) / .9);
-  color: hsl(var(--txt));
-  transition: background-color .16s ease, border-color .16s ease, transform .06s ease;
-}
-#body-login .button:hover {
-  background: hsl(var(--bg-2) / .96);
-}
-#body-login .button:active {
-  transform: translateY(1px);
-}
-
-/* ----------------------------- */
-/* 8) Footer / version / note    */
-/* ----------------------------- */
-#body-login .footnote,
-#body-login .version,
-#body-login .app-extra-field,
-#body-login .login-foot {
-  margin-top: 14px;
-  text-align: center;
-  font-size: .88rem;
-  color: hsl(var(--muted));
-}
-
-/* Floating badge footer (optional class used in your caption) */
-#body-login .floating-badge {
-  position: fixed;
-  left: 50%;
-  bottom: 24px;
-  translate: -50% 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: hsl(var(--bg-3) / .92);
-  border: 1px solid hsl(var(--line));
-  box-shadow: var(--elev-1);
-  color: hsl(var(--txt));
-  font-weight: 700;
-}
-
-/* ----------------------------- */
-/* 9) Accessibility              */
-/* ----------------------------- */
-#body-login *:focus-visible {
-  outline: 2px solid hsl(var(--brand-h) var(--brand-s) var(--brand-l)) !important;
-  outline-offset: 2px;
-}
-@media (forced-colors: active) {
-  #body-login *:focus-visible { outline: 2px solid CanvasText !important; }
-  #body-login input, #body-login button { forced-color-adjust: auto; }
-}
-
-/* High-contrast helper (optional toggle-able class) */
-#body-login.hc * {
-  text-shadow: none !important;
-  box-shadow: none !important;
-}
-
-/* ----------------------------- */
-/* 10) Responsiveness            */
-/* ----------------------------- */
-@media (max-width: 560px) {
-  #body-login #login,
-  #body-login form#login {
-    margin: 24px auto;
-    border-radius: var(--radius-lg);
-  }
-}
-@media (max-width: 420px) {
-  #body-login .logo img, #body-login .logo svg { width: 76px !important; }
-  #body-login #login, #body-login form#login { padding: 18px; }
-}
-
-/* ----------------------------- */
-/* 11) Micro-animations (perf)   */
-/* ----------------------------- */
-@keyframes gdl-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-#body-login #login,
-#body-login form#login {
-  animation: gdl-fade-in .28s ease-out both;
-}
-
-/* Focus ring utility (can be used by NC classes) */
-#body-login .ring-brand:focus-visible {
-  box-shadow: var(--ring);
-  outline: none;
-}
-
-/* ----------------------------- */
-/* 12) Field groups & errors     */
-/* ----------------------------- */
-#body-login .field-error {
-  color: hsl(var(--error));
-  font-size: .88rem;
-  margin-top: 4px;
-}
-#body-login .field-help {
-  color: hsl(var(--muted));
-  font-size: .86rem;
-  margin-top: 4px;
-}
-
-/* ----------------------------- */
-/* 13) Optional background image */
-/* ----------------------------- */
-/* Put an image at: themes/gdl/core/img/background.jpg and uncomment */
-/*
-#body-login {
-  background:
-    linear-gradient(180deg, hsl(var(--bg-1)) 0%, hsl(var(--bg-0)) 100%) !important,
-    url('../img/background.jpg') center/cover no-repeat fixed;
-}
-*/
-
-/* ----------------------------- */
-/* 14) Utility Classes (scoped)  */
-/* ----------------------------- */
-#body-login .u-center {
-  display: grid;
-  place-items: center;
-}
-#body-login .u-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-#body-login .u-col {
-  display: grid;
-  gap: 10px;
-}
-#body-login .u-hidden { display: none !important; }
-#body-login .u-muted { color: hsl(var(--muted)) !important; }
-#body-login .u-strong { font-weight: 800 !important; }
-#body-login .u-pill {
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid hsl(var(--line));
-  background: hsl(var(--bg-3) / .9);
-}
-#body-login .u-card {
-  border-radius: var(--radius-lg);
-  border: 1px solid hsl(var(--line));
-  background: hsl(var(--bg-3) / .96);
-  box-shadow: var(--elev-1);
-  padding: 12px;
-}
-
-/* Spacing scale */
-#body-login .mt-0 { margin-top: 0 !important; }
-#body-login .mt-2 { margin-top: 2px !important; }
-#body-login .mt-4 { margin-top: 4px !important; }
-#body-login .mt-6 { margin-top: 6px !important; }
-#body-login .mt-8 { margin-top: 8px !important; }
-#body-login .mt-10 { margin-top: 10px !important; }
-#body-login .mt-12 { margin-top: 12px !important; }
-#body-login .mt-16 { margin-top: 16px !important; }
-#body-login .mt-20 { margin-top: 20px !important; }
-#body-login .mb-0 { margin-bottom: 0 !important; }
-#body-login .mb-8 { margin-bottom: 8px !important; }
-#body-login .mx-auto { margin-left: auto !important; margin-right: auto !important; }
-#body-login .p-0 { padding: 0 !important; }
-#body-login .p-4 { padding: 4px !important; }
-#body-login .p-8 { padding: 8px !important; }
-#body-login .p-12 { padding: 12px !important; }
-#body-login .p-16 { padding: 16px !important; }
-
-/* Text utilities */
-#body-login .text-center { text-align: center !important; }
-#body-login .text-right { text-align: right !important; }
-#body-login .text-muted { color: hsl(var(--muted)) !important; }
-#body-login .text-xs { font-size: .82rem !important; }
-#body-login .text-sm { font-size: .9rem !important; }
-#body-login .text-base { font-size: 1rem !important; }
-#body-login .text-lg { font-size: 1.12rem !important; }
-#body-login .text-xl { font-size: 1.28rem !important; }
-#body-login .fw-bold { font-weight: 800 !important; }
-
-/* Color utilities */
-#body-login .c-brand { color: hsl(var(--brand-h) var(--brand-s) var(--brand-l)) !important; }
-#body-login .c-ok    { color: hsl(var(--ok)) !important; }
-#body-login .c-warn  { color: hsl(var(--warn)) !important; }
-#body-login .c-err   { color: hsl(var(--error)) !important; }
-
-/* Border utilities */
-#body-login .bd      { border: 1px solid hsl(var(--line)) !important; }
-#body-login .bd-0    { border: 0 !important; }
-#body-login .br-sm   { border-radius: var(--radius-sm) !important; }
-#body-login .br-md   { border-radius: var(--radius-md) !important; }
-#body-login .br-lg   { border-radius: var(--radius-lg) !important; }
-#body-login .br-pill { border-radius: 999px !important; }
-
-/* Shadow utilities */
-#body-login .sh-1 { box-shadow: var(--elev-1) !important; }
-#body-login .sh-2 { box-shadow: var(--elev-2) !important; }
-
-/* Ring utility */
-#body-login .ring { box-shadow: var(--ring) !important; }
-
-/* ----------------------------- */
-/* 15) Visual polish extras      */
-/* ----------------------------- */
-#body-login .divider {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 10px;
-  color: hsl(var(--muted));
-  font-size: .9rem;
-  margin: 10px 0;
-}
-#body-login .divider::before,
-#body-login .divider::after {
-  content: "";
-  height: 1px;
-  background: linear-gradient(90deg, transparent, hsl(var(--line)), transparent);
-}
-
-/* Input with icon (if NC prepends icons) */
-#body-login .input-wrapper {
-  position: relative;
-}
-#body-login .input-wrapper .icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  translate: 0 -50%;
-  width: 18px; height: 18px;
-  color: hsl(var(--muted));
-}
-#body-login .input-wrapper input {
-  padding-left: 38px;
-}
-
-/* Subtle hover lift for card */
-#body-login #login:hover,
-#body-login form#login:hover {
-  box-shadow: 0 16px 44px hsl(var(--brand-h) var(--brand-s) calc(var(--brand-l) - 16%) / .36);
-}
-
-/* ----------------------------- */
-/* 16) Print safety              */
-/* ----------------------------- */
-@media print {
-  #body-login {
-    background: #fff !important;
-    color: #000 !important;
-  }
-  #body-login #login,
-  #body-login form#login {
-    box-shadow: none !important;
-    border: 1px solid #000 !important;
-    background: #fff !important;
-  }
-}
-
-/* ----------------------------- */
-/* 17) Robustness for unknowns   */
-/* ----------------------------- */
-/* Any unknown elements under login should not overflow */
-#body-login #login > *:not(:last-child),
-#body-login form#login > *:not(:last-child) {
-  min-width: 0;
-}
-
-/* Ensure no element causes horizontal scroll */
-#body-login {
-  overflow-x: hidden;
-}
-
-/* ----------------------------- */
-/* 18) Palette quick-swap (opt.) */
-/* ----------------------------- */
-/* To change brand fast, set one of these classes on #body-login */
-
-/* Indigo (default) */
-#body-login.brand-indigo { --brand-h: 223; --brand-s: 88%; --brand-l: 58%; }
-/* Blue */
-#body-login.brand-blue   { --brand-h: 212; --brand-s: 88%; --brand-l: 55%; }
-/* Cyan */
-#body-login.brand-cyan   { --brand-h: 190; --brand-s: 90%; --brand-l: 48%; }
-/* Emerald */
-#body-login.brand-emerald{ --brand-h: 150; --brand-s: 65%; --brand-l: 44%; }
-/* Violet */
-#body-login.brand-violet { --brand-h: 258; --brand-s: 84%; --brand-l: 62%; }
-/* Magenta */
-#body-login.brand-magenta{ --brand-h: 325; --brand-s: 78%; --brand-l: 56%; }
-/* Orange */
-#body-login.brand-orange { --brand-h: 28;  --brand-s: 92%; --brand-l: 56%; }
-/* Red */
-#body-login.brand-red    { --brand-h: 0;   --brand-s: 80%; --brand-l: 58%; }
-
-/* ----------------------------- */
-/* 19) Debug helpers (remove)    */
-/* ----------------------------- */
-/* Uncomment to debug spacing
-#body-login * { outline: 1px dashed rgba(255,0,0,.2); }
-*/
-
-/* =============================================================================
-   END
-   ========================================================================== */
